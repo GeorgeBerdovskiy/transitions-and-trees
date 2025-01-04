@@ -1,7 +1,7 @@
 .PHONY: view build show-input-files pre post aux spellcheck full clean
 .DEFAULT_GOAL: view
 
-SRC_FILES = $(wildcard src/*.tex)
+SRC_FILES = $(wildcard src/*.tex) $(wildcard src/*/*.tex)
 BIB_FILES = $(wildcard src/*.bib)
 IMG_FILES = $(wildcard src/img/*) $(wildcard src/img/*/*)
 

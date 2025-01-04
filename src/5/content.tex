@@ -1,0 +1,144 @@
+\section{Control Structures}
+\paragraph{Problem 5.1} We begin with $s[x \mapsto 4, y \mapsto 1]$. Our goal is to determine what $\dots$ should contain.
+
+\begin{center}
+    \vspace{0.25cm}
+    \begin{prooftree}
+        \hypo{\dots}
+        \infer1{
+            \langle \texttt{repeat y:=y*x; x:=x-1 until x=1}, s \rangle \rightarrow s'
+        }
+    \end{prooftree}
+    \vspace{0.25cm}
+\end{center}
+
+To determine whether the root of the derivation tree was completed using REPEAT-TRUE or REPEAT-FALSE, we need to know whether \texttt{x=1} evaluates to \textit{tt} or \textit{ff}. We can't do this until we find out what $s'$ is, so let's tackle that first.
+
+\begin{center}
+    \vspace{0.25cm}
+    \begin{prooftree}
+        \hypo{
+            \langle \texttt{y := y*x; x:=x-1}, s \rangle \rightarrow s'
+        }
+        \hypo{\dots}
+        \infer2{
+            \langle \texttt{repeat y:=y*x; x:=x-1 until x=1}, s \rangle \rightarrow s'
+        }
+    \end{prooftree}
+    \vspace{0.25cm}
+\end{center}
+
+Now we can apply COMP to figure out $s'$.
+
+\begin{center}
+    \vspace{0.25cm}
+    \begin{prooftree}
+        \hypo{
+            \langle \texttt{y:=y*x}, s \rangle \rightarrow s''
+        }
+        \hypo{
+            \langle \texttt{x:=x-1}, s'' \rangle \rightarrow s'
+        }
+        \infer2{
+            \langle \texttt{y := y*x; x:=x-1}, s \rangle \rightarrow s'
+        }
+
+        \hypo{\dots}
+        \infer2{
+            \langle \texttt{repeat y:=y*x; x:=x-1 until x=1}, s \rangle \rightarrow s'
+        }
+    \end{prooftree}
+    \vspace{0.25cm}
+\end{center}
+
+
+We can apply ASS to the left premise to find that $s'' = s[x \mapsto 4, y \mapsto 1 \times 4 = 4]$. Then, we can apply ASS once again to the right premise to find that $s' = s''[x \mapsto 4 - 1 = 3] = s[x \mapsto 3, y \mapsto 4]$. Since $s' \vdash \texttt{x=1} \rightarrow_b \textit{ff}$, we now know that the derivation tree must be completed using REPEAT-FALSE.
+
+\begin{center}
+    \vspace{0.25cm}
+    \begin{prooftree}
+        \hypo{
+            \langle \texttt{y:=y*x}, s \rangle \rightarrow s''
+        }
+        \hypo{
+            \langle \texttt{x:=x-1}, s'' \rangle \rightarrow s'
+        }
+        \infer2{
+            \langle \texttt{y := y*x; x:=x-1}, s \rangle \rightarrow s'
+        }
+
+        \hypo{
+            \langle \texttt{repeat y:=y*x; x:=x-1 until x=1}, s' \rangle \rightarrow s''
+        }
+
+        \infer2{
+            \langle \texttt{repeat y:=y*x; x:=x-1 until x=1}, s \rangle \rightarrow s''
+        }
+    \end{prooftree}
+    \vspace{0.25cm}
+\end{center}
+
+Now we will consider the right premise in a similar fashion. I'll skip the details because they are exactly the same as the ones above, just using different numbers.
+
+\begin{center}
+    \vspace{0.25cm}
+    \begin{prooftree}
+        \hypo{
+            \langle \texttt{y:=y*x}, s \rangle \rightarrow s''
+        }
+        \hypo{
+            \langle \texttt{x:=x-1}, s'' \rangle \rightarrow s'
+        }
+        \infer2{
+            \langle \texttt{y := y*x; x:=x-1}, s \rangle \rightarrow s'
+        }
+
+
+        \hypo{
+            \langle \texttt{y:=y*x}, s' \rangle \rightarrow s^{(3)}
+        }
+        \hypo{
+            \langle \texttt{x:=x-1}, s^{(3)} \rangle \rightarrow s''
+        }
+
+        \infer2{
+            \langle \texttt{y := y*x; x:=x-1}, s' \rangle \rightarrow s''
+        }
+
+        \hypo{
+            \langle \texttt{repeat y:=y*x; x:=x-1 until x=1}, s'' \rangle \rightarrow s''
+        }
+
+
+        \infer2{
+            \langle \texttt{repeat y:=y*x; x:=x-1 until x=1}, s' \rangle \rightarrow s''
+        }
+
+
+        \infer2{
+            \langle \texttt{repeat y:=y*x; x:=x-1 until x=1}, s \rangle \rightarrow s''
+        }
+    \end{prooftree}
+    \vspace{0.25cm}
+\end{center}
+
+And so on. I should probably switch to landscape because these proof trees can get pretty wide.
+
+\paragraph{Problem 5.7} To prove that $\sim_{sss}$ is an equivalence relation, we must show that it is \textit{reflexive}, \textit{symmetric}, and \textit{transitive}. Those are the three conditions equivalence relations must satisfy.
+
+\textit{Reflexivity.} It is obvious that for every statement $S$ and for every state $s$ we have that $\langle S, s \rangle \Rightarrow^* s'$ if and only if $\langle S, s \rangle \Rightarrow^* s'$. This proves that $\sim_{sss}$ is reflexive.
+
+\textit{Symmetry.} Assume that $S_1 \sim_{sss} S_2$. By definition, this means that for every state $s$ we have that $\langle S_1, s \rangle \Rightarrow^* s'$ if and only if $\langle S_2, s \rangle \Rightarrow^* s'$. This immediately tells us that $\langle S_2, s \rangle \Rightarrow^* s'$ if and only if $\langle S_1, s \Rightarrow^* s'$, that is, that $S_2 \sim_{sss} S_1$. This proves that $\sim_{sss}$ is symmetric.
+
+\textit{Transitivity.} Assume that $S_1 \sim_{sss} S_2$ and that $S_2 \sim{sss} S_3$. We then have for every state $s$ that $\langle S_1, s \rangle \Rightarrow^* s'$ if and only if $\langle S_2, s \rangle \Rightarrow^* s'$ and that $\langle S_2, s \rangle \Rightarrow^* s'$ if and only if $\langle S_3, s \rangle \Rightarrow^* s'$. It is easy to see that this implies that $\langle S_1, s \rangle s'$ if and only if $\langle S_3, s \rangle s'$, that is, that $S_1 \sim_{sss} S_3$. This proves that $\sim_{sss}$ is transitive.
+
+\qed
+
+\paragraph{Problem 5.8}
+
+\begin{center}
+    $\langle \texttt{repeat } S \texttt{ until } b, s \rangle \Rightarrow \langle S; \texttt{if } b \texttt{ then skip else } (\texttt{repeat } S \texttt{ until } b), s \rangle$
+\end{center}
+
+
+
